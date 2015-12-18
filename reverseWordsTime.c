@@ -3,27 +3,35 @@
 #include <stdlib.h>
 void reverseWords(char *s) {
   int originLen = strlen(s);
-  char ** words = (char**)malloc(originLen + 1);
-  int wordLen, i, j= 0;
+  char *words = malloc(originLen);
+  int currentLen = 0;
+  int i, bIndex;
+  int wLen = 0;
+
   char *word = strtok(s, " ");
   while(word) {
-	  printf("%s\n", word);
-	  for (j = 0; j < strlen(word); j++) {
-		  words[i][j] = word[j];
-	  }
-	  word = strtok(NULL, " ");
-	  i++;
+    wLen = strlen(word);
+    if (currentLen > 0) {
+      words[originLen - currentLen - 1] = ' ';
+      currentLen++;
+    }
+    bIndex = originLen - currentLen - wLen;
+    for (i = 0; i < wLen; i++) {
+      words[bIndex + i] = word[i];
+      currentLen++;
+    }
+    word = strtok(NULL, " ");
   }
-  wordLen = i;
-  s[0] = '\0';
-  for (i = wordLen - 1; i >= 0; i--) {
-	  if (i < (wordLen - 1)) strcat(s, " ");
-	  strcat(s, words[i]);
+  for(i = 0; i < currentLen; i++) {
+    s[i] = words[originLen - currentLen + i];
   }
+  if (currentLen < originLen) s[currentLen] = '\0';
+
   free(words);
 }
+
 int main() {
-  char str[] = "1sdg    bs    sdga    ";
+  char str[] = "  aa  sdga  ";
   printf("%s\n", str);
   reverseWords(str);
   printf("%s\n", str);
