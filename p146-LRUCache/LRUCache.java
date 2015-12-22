@@ -1,50 +1,53 @@
+import java.util.LinkedList;
+import java.util.Iterator;
 public class LRUCache {
-  PriorigyQueue<Item> members;
-  List<int> keys;
+  LinkedList<Item> members;
   int mCapacity;
 
   class Item {
     int key;
-    int freshIndex;
-    int refCount;
     int value;
-  }
 
-  class ItemComparator implements Comparator<Item> {
-    public int compare(Item item1, Item item2) {
-      int temp = item2.freshIndex - item1.freshIndex;
-      if (temp != 0) return temp;
-
-      return (item1.refCount - item2.refCount);
+    public Item(int key, int value) {
+      this.key = key;
+      this.value = value;
     }
   }
 
   public LRUCache(int capacity) {
     mCapacity = capacity;
-    members = new PriorigyQueue<>(capacity, new ItemComparator());
-    keys = new ArrayList<int>(capacity);
+    members = new LinkedList<>();
   }
+
   public int get(int key) {
-    for (Item i : members) {
-      if (i.key == key) {
-        i.refCount++;
-        i.freshIndex == 0;
-        return i.value;
-      } else {
-        i.freshIndex++;
+    Item found = null;
+    Item tmp;
+    Iterator<Item> itr = members.iterator();
+    while(itr.hasNext()) {
+      tmp = itr.next();
+      if (tmp.key == key) {
+        found = tmp;
+        itr.remove();
       }
+    }
+    if (found != null) {
+      members.addLast(found);
+      return found.value;
     }
     return -1;
   }
+
   public void set(int key, int value) {
-    if (keys.contains(key)) {
-      return;
+    for (Item i : members) {
+      if (i.key == key) {
+        System.out.println("Already exist key:" + key);
+        return;
+      }
     }
+
     if (members.size() == mCapacity) {
-      Item tmp = members.poll();
-      keys.remove(tmp.key);
+      members.pollFirst();
     };
-    members.add(new Item(key, value));
-    keys.add(key);
+    members.addLast(new Item(key, value));
   }
 }
