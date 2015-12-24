@@ -6,34 +6,32 @@ public class Solution {
   }
 
   public void wallsAndGates(int[][] rooms) {
-    int i, j;
-    boolean dirty;
-    int step = 1;
-    do {
-      dirty = false;
-      for (i = 0; i < rooms.length; i++) {
-        for (j = 0; j < rooms[i].length; j++) {
-          if (rooms[i][j] == (step - 1)) {
-            if (i > 0 && needUpdate(rooms[i - 1][j], step)) {
-              rooms[i - 1][j] = step;
-              if (!dirty) dirty = true;
-            }
-            if (i < (rooms.length - 1) && needUpdate(rooms[i + 1][j], step)) {
-              rooms[i + 1][j] = step;
-              if (!dirty) dirty = true;
-            }
-            if (j > 0 && needUpdate(rooms[i][j - 1], step)) {
-              rooms[i][j - 1] = step;
-              if (!dirty) dirty = true;
-            }
-            if (j < (rooms[i].length - 1) && needUpdate(rooms[i][j + 1], step)) {
-              rooms[i][j + 1] = step;
-              if (!dirty) dirty = true;
-            }
-          }
-        }
+    for (int i = 0; i < rooms.length; i++) {
+      for (int j = 0; j < rooms[i].length; j++) {
+        if (rooms[i][j] == 0)
+          spread(rooms, i, j);
       }
-      step++;
-    } while (!dirty);
+    }
+  }
+
+  public void spread(int[][] rooms, int i, int j) {
+    int step = rooms[i][j];
+
+    if (i > 0 && needUpdate(rooms[i - 1][j], step + 1)) {
+      rooms[i - 1][j] = step + 1;
+      spread(rooms, i - 1, j);
+    }
+    if (i < (rooms.length - 1) && needUpdate(rooms[i + 1][j], step)) {
+      rooms[i + 1][j] = step + 1;
+      spread(rooms, i + 1, j);
+    }
+    if (j > 0 && needUpdate(rooms[i][j - 1], step)) {
+      rooms[i][j - 1] = step + 1;
+      spread(rooms, i, j - 1);
+    }
+    if (j < (rooms[i].length - 1) && needUpdate(rooms[i][j + 1], step)) {
+      rooms[i][j + 1] = step + 1;
+      spread(rooms, i, j + 1);
+    }
   }
 }
